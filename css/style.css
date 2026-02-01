@@ -8,6 +8,52 @@ body {
   font-family: Arial, sans-serif;
 }
 
-h2 {
+.login-box {
+  width: 320px;
+  background: #11182a;
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.login-box h1 {
   color: #4da3ff;
+  margin-bottom: 5px;
+}
+
+.tagline {
+  color: #aaa;
+  margin-bottom: 20px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background: #4da3ff;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+}
+
+.links {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.links a {
+  color: #4da3ff;
+  font-size: 13px;
+  text-decoration: none;
 }
