@@ -13,17 +13,17 @@ const timerText = document.getElementById("timerText");
 const welcomeText = document.getElementById("welcomeText");
 
 let timer = 30;
-let interval = null;
+let timerInterval = null;
 
 const DEMO_OTP = "123456";
 
-/* Random welcome lines */
+/* Welcome text – no repeat on reload */
 const welcomeLines = [
   "Welcome to Vaishnex",
-  "Vaishnex welcomes you",
-  "Secure login by Vaishnex",
-  "Vaishnex OTP verification",
-  "Welcome back to Vaishnex"
+  "Vaishnex Secure Login",
+  "Verify with Vaishnex",
+  "Vaishnex Authentication",
+  "Access Vaishnex Safely"
 ];
 
 welcomeText.innerText =
@@ -31,9 +31,9 @@ welcomeText.innerText =
 
 /* Validation */
 function isValidInput(value) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRegex = /^[0-9]{7,15}$/;
-  return emailRegex.test(value) || phoneRegex.test(value);
+  const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phone = /^[0-9]{7,15}$/;
+  return email.test(value) || phone.test(value);
 }
 
 /* Timer */
@@ -42,12 +42,12 @@ function startTimer() {
   resendBtn.disabled = true;
   timerText.innerText = `Resend OTP in ${timer}s`;
 
-  interval = setInterval(() => {
+  timerInterval = setInterval(() => {
     timer--;
     timerText.innerText = `Resend OTP in ${timer}s`;
 
     if (timer <= 0) {
-      clearInterval(interval);
+      clearInterval(timerInterval);
       timerText.innerText = "You can resend OTP";
       resendBtn.disabled = false;
     }
@@ -81,7 +81,7 @@ verifyOtpBtn.onclick = () => {
     return;
   }
 
-  alert("Login successful!");
+  alert("Vaishnex login successful");
 };
 
 /* Resend OTP */
