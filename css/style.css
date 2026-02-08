@@ -123,4 +123,34 @@ button:disabled {
   background: transparent;
   color: #3b82f6;
   margin-top: 6px;
+}/* ===== Bottom Legal Section ===== */
+
+.legal-bottom {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.legal-link {
+    text-decoration: none;
+    color: #9fb4ff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.3s;
+}
+
+.legal-link:hover {
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.legal-icon {
+    font-size: 14px;
 }
