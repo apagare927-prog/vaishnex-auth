@@ -1,55 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Vaishnex Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Vaishnex Login</title>
+
+<!-- Intl Tel Input -->
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.21/css/intlTelInput.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.21/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.21/js/utils.js"></script>
+
+<style>
+
+/* ===== THEME ===== */
+body{
+margin:0;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+background:radial-gradient(circle,#0b1622,#03070d);
+font-family:Arial;
+color:#e6edf3;
+}
+
+/* ===== CARD ===== */
+.card{
+width:360px;
+padding:28px 22px 26px;
+border-radius:26px;
+background:rgba(255,255,255,.03);
+backdrop-filter:blur(18px);
+box-shadow:0 0 60px rgba(88,166,255,.15);
+text-align:center;
+}
+
+/* ===== LOGO SAME + THEME MATCH ===== */
+.logo{
+width:150px;
+height:150px;
+margin:auto;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:radial-gradient(circle at 30% 30%, #132130, #0b1622 70%);
+font-weight:bold;
+letter-spacing:2px;
+position:relative;
+color:#e6edf3;
+box-shadow:
+inset 0 0 25px rgba(255,255,255,.04),
+0 0 30px rgba(88,166,255,.35);
+}
+
+.logo::before{
+content:"";
+position:absolute;
+inset:-4px;
+border-radius:50%;
+border:2px solid #58a6ff;
+box-shadow:
+0 0 12px #58a6ff,
+0 0 28px #58a6ff,
+0 0 60px rgba(88,166,255,.7);
+animation:logoPulse .9s infinite;
+}
+
+@কkeyframes logoPulse{
+0%,100%{opacity:.75}
+50%{opacity:1}
+}
+
+/* ===== TEXT ===== */
+.dynamic{
+margin:14px 0 18px;
+font-size:14px;
+color:#9ac7ff;
+}
+
+/* ===== INPUT ===== */
+input{
+width:100%;
+padding:14px;
+margin-top:10px;
+border-radius:12px;
+border:none;
+background:#021427;
+color:#fff;
+font-size:15px;
+}
+
+input.error{border:1px solid #ff4d4d}
+
+/* ===== BUTTON ===== */
+button{
+width:100%;
+padding:14px;
+margin-top:14px;
+border:none;
+border-radius:12px;
+background:#2383e2;
+color:#fff;
+font-size:16px;
+cursor:pointer;
+}
+
+/* ===== OTP ===== */
+.timer{margin-top:10px;font-size:13px;color:#9ac7ff}
+.hidden{display:none}
+.error-text{font-size:12px;color:#ff6b6b;margin-top:6px;text-align:left}
+
+/* ===== LEGAL ===== */
+.legal{
+margin-top:16px;
+font-size:12px;
+color:#8fbfff;
+}
+.legal a{
+display:block;
+color:#8fbfff;
+text-decoration:none;
+margin-top:6px;
+}
+
+</style>
 </head>
 <body>
 
-  <div class="page">
-    <div class="card">
+<div class="card">
 
-      <!-- LOGO -->
-      <div class="logo-ring">
-        <span>VAISHNEX</span>
-      </div>
+<div class="logo">VAISHNEX</div>
+<div class="dynamic">Smart access starts here</div>
 
-      <h2 id="welcomeText">Welcome to Vaishnex</h2>
+<input id="loginInput" placeholder="Email or mobile number">
+<div id="detectError" class="error-text"></div>
 
-      <!-- INPUT -->
-      <input
-        type="text"
-        id="userInput"
-        placeholder="Email or mobile number"
-      >
-      <div class="error" id="inputError"></div>
+<div id="phoneBox" class="hidden">
+<input id="phoneInput">
+</div>
 
-      <button id="sendOtpBtn">Send OTP</button>
+<div id="otpBox" class="hidden">
+<input id="otpInput" placeholder="Enter OTP" maxlength="6">
+<div id="otpError" class="error-text"></div>
+</div>
 
-      <!-- OTP SECTION -->
-      <div id="otpSection" class="hidden">
+<button id="sendBtn">Send OTP</button>
+<button id="resendBtn" class="hidden">Resend OTP</button>
+<div id="timer" class="timer hidden"></div>
 
-        <input
-          type="text"
-          id="otpInput"
-          placeholder="Enter OTP"
-        >
-        <div class="error" id="otpError"></div>
+<div class="legal">
+<a href="#">📄 Terms of Use</a>
+<a href="#">🔒 Privacy Policy</a>
+</div>
 
-        <button id="verifyOtpBtn">Verify OTP</button>
+</div>
 
-        <div class="resend-box">
-          <span id="timerText">Resend OTP in 30s</span>
-          <button id="resendBtn" disabled>Resend OTP</button>
-        </div>
+<script>
 
-      </div>
+/* ===== AUTO DETECT EMAIL / MOBILE ===== */
+const loginInput=document.getElementById("loginInput");
+const phoneBox=document.getElementById("phoneBox");
+const phoneInput=document.getElementById("phoneInput");
+const detectError=document.getElementById("detectError");
 
-    </div>
-  </div>
+let iti;
 
-  <script src="js/app.js"></script>
+loginInput.addEventListener("input",()=>{
+
+const v=loginInput.value.trim();
+detectError.innerText="";
+loginInput.classList.remove("error");
+
+if(!v){
+phoneBox.classList.add("hidden");
+return;
+}
+
+/* EMAIL */
+if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){
+phoneBox.classList.add("hidden");
+detectError.innerText="OTP will be sent to this email";
+return;
+}
+
+/* MOBILE */
+if(/^[0-9]{6,15}$/.test(v)){
+
+phoneBox.classList.remove("hidden");
+
+if(!iti){
+iti=window.intlTelInput(phoneInput,{
+initialCountry:"auto",
+geoIpLookup:cb=>{
+fetch("https://ipapi.co/json")
+.then(r=>r.json())
+.then(d=>cb(d.country_code))
+.catch(()=>cb("in"));
+},
+separateDialCode:true,
+utilsScript:
+"https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.21/js/utils.js"
+});
+}
+
+phoneInput.value=v;
+iti.setNumber(v);
+
+return;
+}
+
+loginInput.classList.add("error");
+detectError.innerText="Enter valid email or mobile number";
+
+});
+
+/* ===== SEND OTP ===== */
+const sendBtn=document.getElementById("sendBtn");
+const resendBtn=document.getElementById("resendBtn");
+const otpBox=document.getElementById("otpBox");
+const otpInput=document.getElementById("otpInput");
+const otpError=document.getElementById("otpError");
+const timerBox=document.getElementById("timer");
+
+let timer;
+
+sendBtn.onclick=()=>{
+
+const v=loginInput.value.trim();
+
+if(!v){
+loginInput.classList.add("error");
+detectError.innerText="Field cannot be empty";
+return;
+}
+
+otpBox.classList.remove("hidden");
+sendBtn.classList.add("hidden");
+startTimer();
+
+};
+
+/* ===== TIMER ===== */
+function startTimer(){
+
+let t=30;
+timerBox.classList.remove("hidden");
+resendBtn.classList.add("hidden");
+
+timer=setInterval(()=>{
+
+timerBox.innerText=`Resend OTP in ${t}s`;
+t--;
+
+if(t<0){
+clearInterval(timer);
+timerBox.classList.add("hidden");
+resendBtn.classList.remove("hidden");
+}
+
+},1000);
+
+}
+
+resendBtn.onclick=startTimer;
+
+/* ===== OTP VERIFY ===== */
+otpInput.addEventListener("input",()=>{
+
+if(otpInput.value.length<6){
+otpInput.classList.add("error");
+otpError.innerText="Invalid OTP";
+return;
+}
+
+otpInput.classList.remove("error");
+otpError.innerText="";
+
+/* AUTO LOGIN / CREATE */
+alert("Account Verified → Login / Create Account");
+
+});
+
+</script>
+
 </body>
 </html>
